@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link href="css/main.css" rel="stylesheet" />
+	</head>
+	
+	<body id="message">
+		<header class="mui-bar mui-bar-nav">
+			<h1 class="mui-title">chat</h1>
+		</header>
+		<div class="mui-content">		
+			<div id="msg-list">
+				<!--<img class="msg-item msg-content-image" src="images/logo.png" data-preview-src="" data-preview-group="1" />-->
+				<div class="msg-item" v-for="messages in message" transition="expand">
+					<i class="msg-user mui-icon mui-icon-person"></i>
+					<div class="msg-content">
+						<div class="msg-content-inner">	
+							{{ messages.time }}<br />
+							<img class="msg-item msg-content-image" v-if="messages.src" :src="messages.src" data-preview-src="" data-preview-group="1" />
+							{{ messages.text }}
+						</div>						
+						<div class="msg-content-arrow"></div>
+					</div>
+					<div class="mui-item-clear"></div>
+				</div>
+			</div>
+		</div>
+		<footer>			
+			<div class="footer-center">
+				<textarea id='msg-text' type="text" class='input-text' v-model="input"></textarea>
+			</div>
+			<label class="footer-right">
+				<i id='msg-type' class="mui-icon mui-icon-paperplane" v-on:click="reverseMessage"></i>
+			</label>
+			<i id='msg-image' class="mui-icon mui-icon-camera"></i>
+		</footer>		
+	</body>
+	<script src="js/mui.min.js"></script>
+	<script src="js/mui.zoom.js"></script>
+	<script src="js/mui.previewimage.js"></script>
+	<script src="js/vue.js"></script>
+	<script type="text/javascript" charset="utf-8">		
+		(function($, doc) {
+			$.previewImage();
+			$.plusReady(function() {
+				plus.webview.currentWebview().setStyle({
+					softinputMode: "adjustResize"
+				});
+				var ui = {
+					boxMsgText: doc.querySelector('#msg-text'),
+					areaMsgList: doc.querySelector('#msg-list'),
+				};
+
+				var focus = false;
+				ui.boxMsgText.addEventListener('tap', function(event) {
+					ui.boxMsgText.focus();
+					setTimeout(function() {
+						ui.boxMsgText.focus();
+					}, 0);
+					focus = true;
+					setTimeout(function () {
+						focus = false;
+					},1000);
+					event.detail.gesture.preventDefault();
+				}, false);				
+				//点击消息列表，关闭键盘
+				ui.areaMsgList.addEventListener('click',function (event) {
+					if(!focus){
+						ui.boxMsgText.blur();
+					}
+				})
+			});
+		}(mui, document));
+		//初始化聊天信息数组
+		var messages = {
+			"self":[],
+			"object":[]
+		};
+		//获取系统当前日期和时间
+		var currentDate = '';
+		var areaMsgList = document.getElementById ('msg-list');
+		var focus = document.getElementById('msg-text');
+		function getNowFormatDate() {
+		    var date = new Date();
+		    var seperator1 = "-";
+		    var seperator2 = ":";
+		    var month = date.getMonth() + 1;
+		    var strDate = date.getDate();
+		    var hours = date.getHours();
+		    var minutes = date.getMinutes();
+		    var seconds = date.getSeconds();
+		    if (month >= 1 && month <= 9) {
+		        month = "0" + month;
+		    }
+		    if (strDate >= 0 && strDate <= 9) {
+		        strDate = "0" + strDate;
+		    }
+		    if (hours >= 0 && hours <= 9) {
+		        hours = "0" + hours;
+		    }
+		    if (minutes >= 0 && minutes <= 9) {
+		        minutes = "0" + minutes;
+		    }
+		    if (seconds >= 0 && seconds <= 9) {
+		        seconds = "0" + seconds;
+		    }
+		    currentDate = month + seperator1 + strDate + " " + hours + seperator2 + minutes + seperator2 + seconds;
+		}
+		document.getElementById('msg-image').addEventListener('tap',function(){
+			galleryImg();
+		});
+		function galleryImg() {
+			// 从相册中选择图片
+		    plus.gallery.pick( function(path){
+		    	getNowFormatDate()
+				var arr = {
+					"time" : currentDate,
+     				"text" : "",
+     				"src" : path
+				}
+				messages.self.push(arr);
+				//imageViewer.findAllImage();
+		        //showImg( path );
+		        //createItem(path);
+		    }, function ( e ) {
+		    	
+		    }, {filter:"image"});
+		};
+		var messageVue = new Vue({
+		  	el: '#message',
+		  	data: {
+		  		input:'',
+		    	message: messages.self
+		  	},
+		  	methods: {
+			    reverseMessage: function () {
+			    	focus.focus();
+			    	if(this.input){
+			    		getNowFormatDate();
+						var arr = {
+							"time" : currentDate,
+	         				"text" : this.input,
+	         				"src" : ""
+						}
+				      	messages.self.push(arr);
+				      	this.$nextTick(function () {
+					        areaMsgList.scrollTop = areaMsgList.scrollHeight;
+					    })
+				      	this.input = "";
+			    	}
+			    }
+  			}
+		});
+		window.addEventListener('resize', function() {
+			var focus = document.getElementById('msg-text');
+			if(focus == document.activeElement){
+				areaMsgList.style.paddingBottom = "110px";
+			}else{
+				areaMsgList.style.paddingBottom = "10px";
+			}
+			areaMsgList.scrollTop = areaMsgList.scrollHeight;
+		}, false);
+	</script>
+</html>

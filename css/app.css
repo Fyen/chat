@@ -1,0 +1,24 @@
+/*
+ *这是单独为hello mui准备的个性化css，可以覆盖标准mui的css定义；
+ * 在实际项目开发时，建议为App单独写一个css文件，从而实现项目的自定义皮肤功能；
+ * 
+ * */
+article,aside,dialog,footer,header,section,footer,nav,figure,menu{display:block}
+body{padding: 0;margin: 0; overflow-x:hidden; line-height: 0px;}
+dl,dt,dd,ul,li,p,li,form,h1,h2,h3,h4,h5,h6{padding: 0;margin: 0;}
+ul{list-style: none;}
+li{vertical-align:top/bottom;}
+em{font-style:normal;}
+img{border: 0;}
+a{text-decoration: none; outline:none !important;}
+a:hover{text-decoration:none; cursor:pointer;} 
+a:active{text-decoration:none;}
+.clearfix:after{clear: both;height: 0;line-height: 0;font-size: 0;content: ".";display: block; visibility: hidden;}
+.clearfix{*zoom:1;}
+.fr{float:right !important;}
+.fl{float:left !important;}
+.clearfix{display:inline;}
+*html .clearfix{height:1%;}
+.clearfix{display:block;}
+*+html .clearfix{min-height:1%;}
+input,button,textarea{-webkit-appearance: none;}
